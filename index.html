@@ -718,11 +718,13 @@
     
     <script>
         // CONFIGURAÇÃO - COLE SEU LINK DO MERCADO PAGO AQUI
-        const MERCADO_PAGO_LINK = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=SEU_ID_AQUI';
+        // Link do Mercado Pago está dentro da função handleSubmit
         
         function openModal() {
-            document.getElementById('emailModal').classList.add('active');
-        }
+             document.getElementById('emailModal').classList.add('active');
+    document.body.style.overflow = 'hidden'; // Impede scroll
+}
+```
         
         function closeModal() {
             document.getElementById('emailModal').classList.remove('active');
