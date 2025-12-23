@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacote Completo Day Trade - Mini-Índice WIN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a1929;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header/Hero */
+        .hero {
+            background: linear-gradient(135deg, #0a1929 0%, #1a2d47 100%);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,100 600,300 T1200,300 L1200,600 L0,600 Z" fill="rgba(26,45,71,0.3)"/></svg>') no-repeat bottom;
+            opacity: 0.3;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #ffc107;
+            color: #000;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            position: relative;
+        }
+        
+        .hero h2 {
+            font-size: 1.5rem;
+            color: #b3c5d7;
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+        
+        .price-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 30px 0;
+        }
+        
+        .old-price {
+            font-size: 1.5rem;
+            text-decoration: line-through;
+            color: #f44336;
+            margin-bottom: 10px;
+        }
+        
+        .current-price {
+            font-size: 3.5rem;
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .price-note {
+            font-size: 0.9rem;
+            color: #b3c5d7;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 20px 60px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(76,175,80,0.4);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(76,175,80,0.6);
+        }
+        
+        /* Seções */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-alt {
+            background: #1a2332;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #4caf50;
+        }
+        
+        /* Grid de Produtos */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .product-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(76,175,80,0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: #4caf50;
+            box-shadow: 0 20px 40px rgba(76,175,80,0.3);
+        }
+        
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .product-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+        
+        .product-value {
+            font-size: 1.2rem;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .product-card ul {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .product-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.95rem;
+        }
+        
+        .product-card li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        /* Para Quem É */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .target-item {
+            background: rgba(76,175,80,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .target-item:before {
+            content: "✓";
+            color: #4caf50;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        /* Depoimentos */
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .testimonial-author {
+            font-weight: bold;
+            color: #4caf50;
+        }
+        
+        .testimonial-role {
+            font-size: 0.9rem;
+            color: #b3c5d7;
+        }
+        
+        /* Garantia */
+        .guarantee-box {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #000;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 50px 0;
+        }
+        
+        .guarantee-box h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        /* FAQ */
+        .faq-item {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4caf50;
+            margin-bottom: 10px;
+        }
+        
+        .faq-answer {
+            color: #b3c5d7;
+            line-height: 1.8;
+        }
+        
+        /* CTA Final */
+        .final-cta {
+            background: linear-gradient(135deg, #1a2d47 0%, #0a1929 100%);
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .cta-box {
+            background: rgba(76,175,80,0.1);
+            border: 2px solid #4caf50;
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .benefits-list {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+            display: inline-block;
+        }
+        
+        .benefits-list li {
+            padding: 10px 0;
+            font-size: 1.1rem;
+        }
+        
+        .benefits-list li:before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #000;
+            padding: 40px 0;
+            text-align: center;
+            color: #666;
+        }
+        
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 2rem;
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.2rem;
+            }
+            
+            .current-price {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .cta-button {
+                padding: 15px 40px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Modal de Email */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #1a2332;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-content h3 {
+            color: #4caf50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b3c5d7;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid rgba(76,175,80,0.3);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 2rem;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge">🔥 77% OFF - OFERTA LIMITADA</div>
+            <h1>Pacote Completo de Day Trade<br>Mini-Índice (WIN)</h1>
+            <h2>Manual Ilustrado + 3 Bônus Exclusivos<br>Tudo que você precisa para operar com estratégia e disciplina</h2>
+            
+            <div class="price-box">
+                <div class="old-price">De R$ 297,00</div>
+                <div class="current-price">R$ 67,00</div>
+                <div class="price-note">Economize R$ 230,00 (77% de desconto)</div>
+            </div>
+            
+            <button class="cta-button" onclick="openModal()">
+                QUERO O PACOTE COMPLETO AGORA
+            </button>
+        </div>
+    </section>
+    
+    <!-- O Que Você Recebe -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">📦 O Que Você Vai Receber</h2>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-icon">📘</div>
+                    <h3>Manual Principal</h3>
+                    <div class="product-value">Valor: R$ 97,00</div>
+                    <ul>
+                        <li>Configurações EMAs com cores definidas</li>
+                        <li>Setup MACD explicado passo a passo</li>
+                        <li>Estratégias de compra e venda ilustradas</li>
+                        <li>Horários ideais para operar</li>
+                        <li>Gestão de risco e stops</li>
+                        <li>Quando NÃO operar</li>
+                    </ul>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🎁</div>
+                    <h3>Bônus #1: Checklist</h3>
+                    <div class="product-value">Valor: R$ 67,00</div>
+                    <ul>
+                        <li>17 itens obrigatórios antes de operar</li>
+                        <li>Verificação de estado mental</li>
+                        <li>Checklist de indicadores</li>
+                        <li>Análise completa do setup</li>
+                        <li>Regras de gestão de risco</li>
+                        <li>Gatilhos de alerta</li>
+                    </ul>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🎁</div>
+                    <h3>Bônus #2: Planilha</h3>
+                    <div class="product-value">Valor: R$ 67,00</div>
+                    <ul>
+                        <li>Tabela para registrar operações</li>
+                        <li>Campos de entrada, saída, stop, alvo</li>
+                        <li>Cálculo de win rate</li>
+                        <li>Métricas de desempenho</li>
+                        <li>Área de análise</li>
+                        <li>Como evoluir com dados</li>
+                    </ul>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🎁</div>
+                    <h3>Bônus #3: Psicologia</h3>
+                    <div class="product-value">Valor: R$ 66,00</div>
+                    <ul>
+                        <li>7 inimigos psicológicos do trader</li>
+                        <li>10 regras de ouro</li>
+                        <li>Checklist emocional</li>
+                        <li>Técnicas de controle</li>
+                        <li>Como evitar overtrading</li>
+                        <li>Exercícios práticos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Para Quem É -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">👥 Para Quem É Este Pacote</h2>
+            
+            <div class="target-grid">
+                <div class="target-item">
+                    Iniciantes que querem começar com método completo
+                </div>
+                <div class="target-item">
+                    Traders que operam sem estratégia clara
+                </div>
+                <div class="target-item">
+                    Quem perde dinheiro por falta de configuração
+                </div>
+                <div class="target-item">
+                    Operadores do mini-índice (WIN)
+                </div>
+                <div class="target-item">
+                    Quem quer aprender gestão de risco
+                </div>
+                <div class="target-item">
+                    Traders que precisam de disciplina
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Depoimentos -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">💬 O Que Nossos Alunos Dizem</h2>
+            
+            <div class="testimonials">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Operei por 6 meses no prejuízo até encontrar este manual. A diferença foi ter tudo configurado: cores das EMAs, parâmetros do MACD, horários... Nada de ficar tentando 'descobrir'. Agora opero com método!"
+                    </div>
+                    <div class="testimonial-author">Ricardo S.</div>
+                    <div class="testimonial-role">34 anos, Trader iniciante</div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "O checklist salvou meu capital. Eu entrava em qualquer operação por impulso. Agora confiro os 17 itens antes de apertar o botão. Meu win rate melhorou muito em 2 meses."
+                    </div>
+                    <div class="testimonial-author">Amanda L.</div>
+                    <div class="testimonial-role">28 anos, Analista financeira</div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "O guia de psicologia foi um tapa na cara (no bom sentido). Eu era o típico trader vingativo: perdia uma e entrava em outra pra 'recuperar'. Resultado: sempre no prejuízo. Hoje sigo as regras e durmo tranquilo."
+                    </div>
+                    <div class="testimonial-author">Marcos T.</div>
+                    <div class="testimonial-role">41 anos, Empresário</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Garantia -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="guarantee-box">
+                <h3>🛡️ Garantia Incondicional de 7 Dias</h3>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Se por qualquer motivo você não gostar do material, basta enviar um email em até 7 dias e devolvemos 100% do seu investimento. Sem perguntas, sem burocracia. Todo o risco é nosso!
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">❓ Perguntas Frequentes</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Funciona para quem está começando do zero?</div>
+                <div class="faq-answer">
+                    Sim! O manual foi criado pensando em iniciantes. Tudo explicado passo a passo, com ilustrações e exemplos práticos. As configurações vêm prontas, você só precisa copiar.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Preciso de muito capital para começar?</div>
+                <div class="faq-answer">
+                    Com 1 contrato de mini-índice (WIN) você já pode operar. O importante é ter capital que você possa arriscar sem comprometer suas contas essenciais.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Quais plataformas posso usar?</div>
+                <div class="faq-answer">
+                    O manual é baseado no ProfitChart, mas as configurações funcionam em qualquer plataforma (MetaTrader, TradingView, etc.). Os indicadores EMAs e MACD são universais.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Recebo o material na hora?</div>
+                <div class="faq-answer">
+                    SIM! Assim que o pagamento for confirmado (Pix é instantâneo), você recebe os 4 PDFs por email. Pode começar a estudar em 5 minutos.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Os bônus são realmente gratuitos?</div>
+                <div class="faq-answer">
+                    SIM! Ao comprar o pacote por R$ 67,00, você recebe o manual + os 3 bônus. Não há custos adicionais. Tudo incluso.
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Final -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2 style="margin-bottom: 30px; font-size: 2.5rem;">
+                    🚀 Garanta Seu Acesso Agora
+                </h2>
+                
+                <div class="price-box" style="margin: 30px 0;">
+                    <div class="old-price">De R$ 297,00</div>
+                    <div class="current-price">POR APENAS R$ 67,00</div>
+                </div>
+                
+                <ul class="benefits-list">
+                    <li>Entrega imediata por email</li>
+                    <li>4 PDFs em alta qualidade</li>
+                    <li>Acesso vitalício ao material</li>
+                    <li>7 dias de garantia total</li>
+                    <li>Pagamento 100% seguro</li>
+                </ul>
+                
+                <button class="cta-button" onclick="openModal()" style="margin-top: 30px;">
+                    SIM, QUERO O PACOTE COMPLETO
+                </button>
+                
+                <p style="margin-top: 20px; color: #b3c5d7;">
+                    Você está a um clique de ter tudo o que precisa para operar com estratégia, disciplina e controle emocional.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="payment-icons">
+                <span title="Pix">💳</span>
+                <span title="Cartão">💰</span>
+                <span title="Boleto">🏦</span>
+            </div>
+            <p>Todos os direitos reservados - 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Day trade envolve risco de perda. Este material é educacional e não garante resultados.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Modal de Captura de Email -->
+    <div class="modal" id="emailModal">
+        <div class="modal-content">
+            <h3>Último Passo!</h3>
+            <p style="color: #b3c5d7; margin-bottom: 20px;">
+                Preencha seus dados para finalizar a compra
+            </p>
+            
+            <form id="checkoutForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">Nome Completo *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Seu Melhor Email *</label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="exemplo@email.com">
+                    <small style="color: #b3c5d7; display: block; margin-top: 5px;">
+                        Os PDFs serão enviados para este email
+                    </small>
+                </div>
+                
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 20px;">
+                    FINALIZAR COMPRA
+                </button>
+            </form>
+            
+            <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                Ao clicar você será redirecionado para o Mercado Pago
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // CONFIGURAÇÃO - COLE SEU LINK DO MERCADO PAGO AQUI
+        const MERCADO_PAGO_LINK = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=SEU_ID_AQUI';
+        
+        function openModal() {
+            document.getElementById('emailModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('emailModal').classList.remove('active');
+        }
+        
+        function handleSubmit(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    
+    // Salvar dados no localStorage (para referência futura)
+    localStorage.setItem('customerName', name);
+    localStorage.setItem('customerEmail', email);
+    
+    // Redirecionar para Mercado Pago com informações do comprador
+    const checkoutUrl = `https://mpago.la/1RSNXDd?payer_email=${encodeURIComponent(email)}&payer_name=${encodeURIComponent(name)}`;
+    window.location.href = checkoutUrl;
+}
+        
+        // Fechar modal ao clicar fora
+        document.getElementById('emailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
